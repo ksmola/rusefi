@@ -16,16 +16,35 @@
 #include "efilib.h"
 #include "tunerstudio_configuration.h"
 
-static uint16_t buffer[1000] CCM_OPTIONAL;
+typedef struct {
+	bool trigger1 : 1;
+	bool trigger2 : 1;
+	uint32_t timestamp;
+} composite_logger_s;
+
+
+
+static composite_logger_s buffer[COMPOSITE_PACKET_COUNT] CCM_OPTIONAL;
 static size_t NextIdx = 0;
 static volatile bool ToothLoggerEnabled = false;
 
 static uint32_t lastEdgeTimestamp = 0;
 
-void SetNextEntry(uint16_t entry) {
+static bool trigger1 = false;
+static bool trigger2 = false;
+
+//char (*__kaboom)[sizeof( composite_logger_s )] = 1;
+
+static void SetNextEntry(uint32_t nowUs, bool trigger1, bool trigger2) {
 	// TS uses big endian, grumble
-	buffer[NextIdx] = SWAP_UINT16(entry);
+	buffer[NextIdx].timestamp = SWAP_UINT32(nowUs);
+//	int value = 239000 + NextIdx;
+//	buffer[NextIdx].second = SWAP_UINT32(value);
+	buffer[NextIdx].trigger1 = trigger1;
+	buffer[NextIdx].trigger2 = trigger2;
 	NextIdx++;
+
+	static_assert(sizeof(composite_logger_s) == COMPOSITE_PACKET_SIZE, "composite packet size");
 
 	// If we hit the end, loop
 	if (NextIdx >= sizeof(buffer) / sizeof(buffer[0])) {
@@ -39,19 +58,25 @@ void LogTriggerTooth(trigger_event_e tooth, efitick_t timestamp) {
 		return;
 	}
 
-	// We currently only support the primary trigger falling edge
-	// (this is the edge that VR sensors are accurate on)
-	// Since VR sensors are the most useful case here, this is okay for now.
-	if (tooth != SHAFT_PRIMARY_FALLING) {
-		return;
+	switch (tooth) {
+	case SHAFT_PRIMARY_FALLING:
+		trigger1 = false;
+		break;
+	case SHAFT_PRIMARY_RISING:
+		trigger1 = true;
+		break;
+	case SHAFT_SECONDARY_FALLING:
+		trigger2 = false;
+		break;
+	case SHAFT_SECONDARY_RISING:
+		trigger2 = true;
+		break;
+	default:
+		break;
 	}
 
 	uint32_t nowUs = NT2US(timestamp);
-	// 10us per LSB - this gives plenty of accuracy, yet fits 655.35 ms in to a uint16
-	uint16_t delta = static_cast<uint16_t>((nowUs - lastEdgeTimestamp) / 10);
-	lastEdgeTimestamp = nowUs;
-
-	SetNextEntry(delta);
+	SetNextEntry(nowUs, trigger1, trigger2);
 }
 
 void EnableToothLogger() {

@@ -109,7 +109,7 @@ enable2ndByteCanID = false
 
 [LoggerDefinition]
   ; valid logger types: composite, tooth, trigger, csv
-  loggerDef = compositeLogger, "Primary Trigger Logger", tooth
+  loggerDef = compositeLogger, "Primary Trigger Logger", composite
         startCommand = "l\x01"
         stopCommand  = "l\x02"
         dataReadCommand = "L"
@@ -122,8 +122,11 @@ enable2ndByteCanID = false
        recordDef =   0,   0,   @@COMPOSITE_PACKET_SIZE@@
 
        ; uint16 that stores 1/100 second
-       recordField = toothTime, "tooth", 0, 16, 0.01, "ms"
+		recordField = toothTime, 		"tooth", 0, 16, 0.01, "ms"
+        recordField = trigger1Level,          "Trigger1",     16,          1,          1.0,    "Flag"
+        recordField = trigger2Level,          "Trigger2",     17,          1,          1.0,    "Flag"
 
+        calcField = time,                "Time",   "ms",  { toothTime }
 
 [VeAnalyze]
 
