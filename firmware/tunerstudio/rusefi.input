@@ -122,9 +122,11 @@ enable2ndByteCanID = false
        recordDef =   0,   0,   @@COMPOSITE_PACKET_SIZE@@
 
        ; uint16 that stores 1/100 second
-		recordField = toothTime, 		"tooth", 0, 16, 0.01, "ms"
-        recordField = trigger1Level,          "Trigger1",     16,          1,          1.0,    "Flag"
-        recordField = trigger2Level,          "Trigger2",     17,          1,          1.0,    "Flag"
+		recordField = toothTime, 		"tooth", 0, 32, 0.01, "ms"
+        recordField = trigger1Level,          "Trigger1",     32,          1,          1.0,    "Flag"
+        recordField = trigger2Level,          "Trigger2",     33,          1,          1.0,    "Flag"
+        recordField = trigger3Level,          "Trigger3",     54,          1,          1.0,    "Flag"
+        recordField = trigger4Level,          "Trigger4",     55,          1,          1.0,    "Flag"
 
         calcField = time,                "Time",   "ms",  { toothTime }
 
