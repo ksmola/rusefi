@@ -180,8 +180,13 @@ void hpfpValveBench(void) {
 	pinbench(/*delay*/"1000", /* onTime */"20", /*oftime*/"500", "3", &enginePins.hpfpValve, CONFIG(hpfpValvePin));
 }
 
-void fuelPumpBench(void) {
-	fuelPumpBenchExt("3000");
+void fuelPumpBench() {
+	runBenchOnOff(1, &enginePins.fuelPumpRelay);
+}
+
+void runBenchOnOff(bool on_off, OutputPin *output) {
+	isRunningBench = on_off ? true : false;
+	output->setValue(true);
 }
 
 // fuelbench 5 1000 2
@@ -248,6 +253,9 @@ static void handleBenchCategory(uint16_t index) {
 		// cmd_test_fuel_pump
 		fuelPumpBench();
 		return;
+	// case CMD_TS_BENCH_FUEL_PUMP_OFF:
+	// 	fuelPumpBench(false);
+	// 	return;
 	case CMD_TS_BENCH_STARTER_ENABLE_RELAY:
 		starterRelayBench();
 		return;

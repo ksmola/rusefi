@@ -15,6 +15,7 @@
 void initBenchTest(Logging *sharedLogger);
 
 bool isRunningBenchTest(void);
+void runBenchOnOff(bool on_off, OutputPin *output);
 
 void fanBench(void);
 void fuelPumpBench(void);
