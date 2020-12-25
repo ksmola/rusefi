@@ -19,6 +19,8 @@ void runBenchOnOff(bool on_off, OutputPin *output);
 
 void fanBench(void);
 void fuelPumpBench(void);
+void fuelPumpBenchOn(void);
+void fuelPumpBenchOff(void);
 void acRelayBench(void);
 void milBench(void);
 void starterRelayBench(void);

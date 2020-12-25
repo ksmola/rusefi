@@ -1481,7 +1481,7 @@ menuDialog = main
 	menu = "&Controller"
 		subMenu = ecuStimulator,			"ECU stimulator"
 		subMenu = datalogSettings,			"Datalogging"
-		subMenu = ioTest,					"Bench test"
+		subMenu = ioTest,					"I/O Test/Debug"
 		subMenu = engineTypeDialog,			"Popular vehicles"
 		subMenu = std_separator
 		
@@ -1588,6 +1588,7 @@ cmd_test_inj12 = "@@TS_IO_TEST_COMMAND_char@@\x00\x13\x00\x0c"
 
 cmd_test_main_relay     	 	= "@@TS_IO_TEST_COMMAND_char@@@@CMD_TS_BENCH_CATEGORY_16_hex@@@@CMD_TS_BENCH_MAIN_RELAY_16_hex@@"
 cmd_test_fuel_pump           	= "@@TS_IO_TEST_COMMAND_char@@@@CMD_TS_BENCH_CATEGORY_16_hex@@@@CMD_TS_BENCH_FUEL_PUMP_16_hex@@"
+cmd_test_fuel_pump_off         	= "@@TS_IO_TEST_COMMAND_char@@@@CMD_TS_BENCH_CATEGORY_16_hex@@@@CMD_TS_BENCH_FUEL_PUMP_OFF_16_hex@@"
 cmd_test_starter_relay     	 	= "@@TS_IO_TEST_COMMAND_char@@@@CMD_TS_BENCH_CATEGORY_16_hex@@@@CMD_TS_BENCH_STARTER_ENABLE_RELAY_16_hex@@"
 cmd_test_starter_disable_relay 	= "@@TS_IO_TEST_COMMAND_char@@@@CMD_TS_BENCH_CATEGORY_16_hex@@@@CMD_TS_BENCH_STARTER_DISABLE_RELAY_16_hex@@"
 cmd_test_ac_relay     		 	= "@@TS_IO_TEST_COMMAND_char@@@@CMD_TS_BENCH_CATEGORY_16_hex@@@@CMD_TS_BENCH_AC_COMPRESSOR_RELAY_16_hex@@"
@@ -3218,12 +3219,46 @@ cmd_set_engine_type_default					= "@@TS_IO_TEST_COMMAND_char@@\x00\x31\x00\x00"
 		commandButton = "Reset ECU", cmd_reset_controller
 		commandButton = "Reset to DFU", cmd_dfu
 
+	dialog = testFP, "Fuel Pump", yAxis
+		commandButton = "On", cmd_test_fuel_pump
+		commandButton = "Off", cmd_test_fuel_pump_off
+	
+	dialog = testRadFan, "Radiator Fan", yAxis
+		commandButton = "On", cmd_test_radiator_fan
+		commandButton = "Off", cmd_test_radiator_fan
+
+	dialog = testCheckEngine, "Check Engine", yAxis
+		commandButton = "On", cmd_test_check_engine_light
+		commandButton = "Off", cmd_test_check_engine_light
+	
+	dialog = testACRelay, "A/C Relay", yAxis
+		commandButton = "On", cmd_test_ac_relay
+		commandButton = "Off", cmd_test_ac_relay
+	
+	dialog = testStarterRelay, "Starter Relay", yAxis
+		commandButton = "On", cmd_test_starter_relay
+		commandButton = "Off", cmd_test_starter_relay
+	
+	dialog = testIO1, "", xAxis
+		panel = testFP
+		panel = testRadFan
+	 	panel = testCheckEngine
+		panel = testACRelay
+		panel = testStarterRelay
+
+	dialog = testICV, "", yAxis
+		slider = "Manual IAC Position",				manIdlePosition, horizontal
+		commandButton = "On", cmd_test_idle_valve
+		commandButton = "Off", cmd_test_idle_valve
+		
+	dialog = testIO2, "ICV", xAxis
+		panel = testICV
+		gauge  = idleAirValvePositionGauge
+
 	; bench test	
-	dialog = ioTest, "Bench Test & Commands", xAxis
-		panel = testSpark
-		panel = testInjectors
-		panel = testFsio
-		panel = testMisc
+	dialog = ioTest, "I/O Test", yAxis
+		panel = testIO1
+		panel = testIO2
 	
 	dialog = engineTypeDialog, "Popular vehicles"
 		field = "!These buttons send a command to rusEFI controller to apply preset values"
